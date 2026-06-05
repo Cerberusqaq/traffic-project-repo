@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>灵动交通可视化平台</title>
+
+    <!-- Leaflet CSS (本地) -->
+    <link rel="stylesheet" href="./vendor/leaflet.css"/>
+
+    <!-- 项目自定义样式 -->
+    <link rel="stylesheet" href="./css/style.css">
+
+
+</head>
+
+<body>
+    <!-- 地图容器 -->
+    <div id="map"></div>
+
+    <!-- 顶部状态提示条 -->
+    <div id="status" class="status"></div>
+
+    <!-- ==================== 左上控制面板 ==================== -->
+    <div class="controls-container1">
+        <div class="controls-title">灵动交通</div>
+        <div class="controls-title2">可视化平台</div>
+        <div class="controls-subtitle">Dynamic Transport</div>
+        <div class="control-group1">
+            <!-- 粒子动画按钮 -->
+            <button id="particleBtn" onclick="toggleParticleAnimation()">
+                <img src="./assets/icons/particle.svg" alt="粒子">
+            </button>
+            <!-- 数据点按钮 -->
+            <button id="showMarkersBtn" onclick="toggleMarkers()">
+                <img src="./assets/icons/data_marker.svg" alt="数据点">
+            </button>
+            <!-- 热力图按钮 -->
+            <button id="showHeatBtn" onclick="toggleHeat()">
+                <img src="./assets/icons/heat.svg" alt="热力图">
+            </button>
+            <!-- 可视化播放/暂停按钮 -->
+            <button id="visualPlayPauseBtn" onclick="toggleVisualPlayPause()">
+                <img class="play-icon" src="./assets/icons/visualization_resume.svg" alt="播放" style="display:none">
+                <img class="pause-icon" src="./assets/icons/visualization_pause.svg" alt="暂停">
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 搜索面板 ==================== -->
+    <div class="controls-container2">
+        <div class="control-group2">
+            <input type="text" class="input1" id="searchText" placeholder="">
+            <button class="btn1" onclick="searchByText()">
+                <img src="./assets/icons/btn1.svg" alt="检索">
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 左下功能按钮组 ==================== -->
+    <div class="left-fixed-btn-group">
+        <!-- 1. 实时数据展示 -->
+        <button id="showRealtimeDataBtn" onclick="onRealtimeDataBtnClick()">
+            <img src="./assets/icons/realtime_data.svg" alt="实时数据">
+        </button>
+        <!-- 2. 历史数据展示 -->
+        <button id="showHistoryBtn" data-menu-target="historyMenu">
+            <img src="./assets/icons/history.svg" alt="历史数据">
+        </button>
+        <!-- 3. 模型预测展示 -->
+        <button id="predictTrafficBtn" data-menu-target="predictMenu">
+            <img src="./assets/icons/predict.svg" alt="模型预测">
+        </button>
+        <!-- 4. 突发事件模拟 -->
+        <button id="customizeEventsBtn" data-menu-target="customizeMenu">
+            <img src="./assets/icons/customize.svg" alt="模拟事件">
+        </button>
+        <!-- 5. 路线规划导览 -->
+        <button id="realtimePlanBtn" data-menu-target="planMenu">
+            <img src="./assets/icons/realtimePlan.svg" alt="路线规划">
+        </button>
+    </div>
+
+    <!-- ==================== 二级菜单容器 ==================== -->
+    <div class="global-fixed-submenu-box">
+        <!-- 历史数据菜单（日历） -->
+        <div class="fixed-submenu" id="historyMenu">
+            <div class="calendar-container" id="historyCalendar"></div>
+        </div>
+        <!-- 流量预测菜单（日历） -->
+        <div class="fixed-submenu" id="predictMenu">
+            <div class="calendar-container" id="predictCalendar"></div>
+        </div>
+        <!-- 突发事件菜单 -->
+        <div class="fixed-submenu" id="customizeMenu">
+            <div class="submenu-item" data-action="event-add">添加交通事件</div>
+            <div class="submenu-item" data-action="event-edit">编辑事件信息</div>
+            <div class="submenu-item" data-action="event-delete">删除无效事件</div>
+            <div class="submenu-item" data-action="event-setting">事件影响设置</div>
+        </div>
+        <!-- 路线规划菜单 -->
+        <div class="fixed-submenu" id="planMenu">
+            <textarea class="plan-input" id="planInput" placeholder="请用自然语言描述您的行程&#10;例如：明天早上8点从香港大学到中环"></textarea>
+            <button class="plan-confirm-btn" id="planConfirmBtn" onclick="handlePlanRoute()">
+                <img src="./assets/icons/plan_confirm.svg" alt="确认">
+            </button>
+            <div class="plan-status" id="planStatus"></div>
+            <div class="plan-result" id="planResult"></div>
+        </div>
+    </div>
+
+    <!-- ==================== 右下常驻控件 ==================== -->
+    <!-- 缩放等级指示器 -->
+    <span id="currentZoomLevel" class="zoom-level-indicator">
+        <span class="zoom-num">12</span><br>
+        <span class="zoom-text">缩放</span>
+    </span>
+
+    <!-- 深色/浅色模式切换 -->
+    <button id="darkModeToggle" onclick="toggleDarkMode()">
+        <img class="switch_to_lightmode_icon" src="./assets/icons/switch_to_lightmode_icon.svg" alt="浅色">
+        <img class="switch_to_darkmode_icon" src="./assets/icons/switch_to_darkmode_icon.svg" alt="深色">
+    </button>
+
+    <!-- 主题编辑按钮 -->
+    <button id="editModeBtn">
+        <img class="switch_to_lightmode_edit" src="./assets/icons/edit_lightmode.svg" alt="编辑模式">
+        <img class="switch_to_darkmode_edit" src="./assets/icons/edit_darkmode.svg" alt="编辑模式">
+    </button>
+
+    <!-- 颜色编辑弹出菜单 -->
+    <div class="edit-submenu-wrapper">
+        <div class="color-edit-menu" id="colorEditMenu">
+            <div class="color-btn-group">
+                <button class="color-item color1" data-color="#b4f0e6">
+                    <img src="./assets/icons/color1.svg" alt="主题1">
+                </button>
+                <button class="color-item color2" data-color="#64d7dc">
+                    <img src="./assets/icons/color2.svg" alt="主题2">
+                </button>
+                <button class="color-item color3" data-color="#fad28c">
+                    <img src="./assets/icons/color3.svg" alt="主题3">
+                </button>
+                <button class="color-item color4" data-color="#ff8773">
+                    <img src="./assets/icons/color4.svg" alt="主题4">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 时间轴滑块 ==================== -->
+    <div class="timeline-container" id="timelineContainer">
+        <div class="timeline-bg">
+            <span class="timeline-date-label" id="timelineDateLabel">--</span>
+            <input type="range" id="timelineSlider" min="0" max="143" value="0">
+            <span class="timeline-time-label" id="timelineTimeLabel">--</span>
+        </div>
+    </div>
+
+    <!-- ==================== 实时数据弹窗 ==================== -->
+    <div id="realtimeModal" class="realtime-modal" style="display:none;">
+        <div class="realtime-modal-header" id="realtimeModalHeader">
+            <span class="realtime-modal-title">实时交通数据</span>
+            <button class="realtime-modal-close" id="realtimeModalClose">&times;</button>
+        </div>
+        <div class="realtime-modal-content" id="realtimeModalContent">
+            <div class="realtime-loading">加载中...</div>
+        </div>
+    </div>
+
+    <!-- ==================== 右侧数据面板 ==================== -->
+    <button class="toggle-panel-btn" id="toggleContainer3">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+    </button>
+
+    <div class="controls-container3 collapsed" id="container3">
+        <div class="container3-content">
+            <div class="controls-title3">实时数据</div>
+            <div class="controls-subtitle3">Realtime Data</div>
+        </div>
+    </div>
+    
+    <!-- ==================== 统一通知弹窗（红色毛玻璃） ==================== -->
+    <div id="cozeToast" class="coze-toast" style="display:none;">
+        <span id="cozeToastMsg"></span>
+    </div>
+
+    <!-- Leaflet JS 核心库（本地） -->
+    <script src="./vendor/leaflet.js"></script>
+    <!-- Leaflet 箭头插件（仅透明连线，暂不加载） -->
+    <!-- <script src="https://unpkg.com/leaflet-arrowheads@1.4.0/src/leaflet-arrowheads.js"></script> -->
+    <!-- Leaflet 热力图插件（本地） -->
+    <script src="./vendor/leaflet-heat.min.js"></script>
+
+    <!-- 项目功能模块（加载顺序有依赖关系） -->
+    <!-- 1. 粒子动画模块 -->
+    <script src="./js/particle.js"></script>
+    <!-- 2. 热力图模块 -->
+    <script src="./js/heatmap.js"></script>
+    <!-- 3. UI 工具模块（日历、菜单、工具函数） -->
+    <script src="./js/ui.js"></script>
+    <!-- 4. 主应用逻辑（依赖上述模块） -->
+    <script src="./js/app.js"></script>
+</body>
+</html>
