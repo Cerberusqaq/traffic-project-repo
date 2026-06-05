@@ -1,0 +1,1538 @@
+*{margin:0;padding:0;box-sizing:border-box}
+/* html */
+        body,html{
+            height:100%;
+            overflow:hidden;
+            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+            background:#ffffff;
+            color:#2d2d2d;
+            touch-action: manipulation; /* 禁止双指缩放、双击放大等触摸操作 */
+            overflow-x: hidden; /* 防止横向滚动导致的缩放触发 */
+        }
+        body.dark-mode{
+            background:#1a1a1a;
+        }
+/* 地图底板 */
+        #map{
+            width:100vw;
+            height:100vh;
+            position:fixed;
+            background:#f3f3f3;
+            top:0;
+            left:0;
+            z-index:1;
+        }
+        body.dark-mode #map{
+            background:#1a1a1a;
+        }
+/* 按钮通用样式 */
+        button{
+            padding:0;
+            border:none;
+            border-radius:50%;
+            cursor:pointer;
+            font-size:14px;
+            font-weight:500;
+            transition:all 0.3s;
+            width:45px;
+            height:45px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:#ffffff;
+            border:1.5px solid rgba(255,255,255,0.2);
+
+        }
+        body.dark-mode button{background:rgba(255,255,255,0.3);}
+        button:disabled{opacity:0.4;transform:none;cursor:not-allowed}
+/* 第一控制面板 */
+/* 第一控制面板 */
+/* 第一控制面板 */
+        .controls-container1{
+            position:fixed;
+            top:20px;
+            left:20px;
+            width:305px;
+            height:180px;
+            z-index:2000;
+            background:rgba(240,240,240,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border:1.5px solid rgba(255,255,255,0.2);
+            border-radius:32.5px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            transition:all 0.3s;
+            overflow:hidden;
+        }
+        body.dark-mode .controls-container1{
+            background:rgba(45,45,45,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            color:#ffffff;
+        }
+        /* 第一控制面板标题 */
+        .controls-title {
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-align: left;
+            margin-left:30px;
+            margin-top:10px;
+            width: 100%;
+            color: #2d2d2d;
+        }
+        body.dark-mode .controls-title {
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.1);
+        }
+        .controls-title2 {
+            font-size: 30px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-align: left;
+            margin-left:30px;
+            margin-top:-5px;
+            width: 100%;
+            color: #2d2d2d;
+        }
+        body.dark-mode .controls-title2 {
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.1);
+        }
+        .controls-subtitle {
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            text-align: left;
+            margin-left:30px;
+            margin-top:-3px;
+            width: 100%;
+            color: #2d2d2d;
+        }
+        body.dark-mode .controls-subtitle {
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.1);
+        }
+        .control-group1{
+            display:flex;
+            align-items:center;
+            width: 100%; 
+            justify-content: space-evenly; 
+            gap: 25px; 
+            margin-top: auto; 
+            margin-bottom: 10px;
+        }
+        /* 1.动效功能按钮 */
+        #particleBtn{
+            z-index: 10000;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(100,200,165,0.7);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        #particleBtn img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        /* 2.数据点功能按钮 */
+        #showMarkersBtn{
+            z-index: 10000;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(100,200,165,0.7);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        #showMarkersBtn img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        /* 3.热力图功能按钮 */
+        #showHeatBtn{
+            z-index: 10000;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(100,200,165,0.7);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        #showHeatBtn img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        /* 4.可视化播放 / 暂停按钮 */
+        #visualPlayPauseBtn{
+            z-index: 10000;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(100,200,165,0.7);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        #visualPlayPauseBtn img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        /* 统一悬浮与激活样式 */
+        #particleBtn:hover, #showMarkersBtn:hover, #showHeatBtn:hover, #visualPlayPauseBtn:hover{
+            background:rgba(105,220,160,0.75) !important;
+            transform:scale(1.04);
+            box-shadow: 0 0 5px rgba(105,220,160,0.75) !important;
+        }
+        #particleBtn.active, #showMarkersBtn.active, #showHeatBtn.active{
+            background:rgba(105,220,160,0.75);
+            box-shadow: 0 0 5px rgba(105,220,160,0.75);
+        }
+/* 第二控制面板 */
+/* 第二控制面板 */
+/* 第二控制面板 */
+        .controls-container2{
+            position:fixed;
+            top:220px;
+            left:20px;
+            width:305px;
+            height:65px;
+            z-index:2000;
+            background:rgba(240,240,240,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border:1.5px solid rgba(255,255,255,0.2);
+            border-radius:32.5px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content: center; 
+            transition:all 0.3s;
+            overflow:hidden;
+        }
+        body.dark-mode .controls-container2{
+            background:rgba(45,45,45,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        .control-group2{
+            display:flex;
+            align-items:center;
+            justify-content: space-evenly; 
+            gap:35px;
+        }
+        /* 输入框 */
+        /* input[type="text"]{
+            z-index: 10000;
+            padding:15px 15px;
+            justify-content: center;
+            border:1.5px solid;
+            border-radius:9999px;
+            height:45px;
+            width:205px;
+            font-size:15px;
+            letter-spacing:0.5px;
+            background:rgba(255,255,255,0.15);
+            color:#2d2d2d;
+            outline: none;
+        }
+        body.dark-mode input{
+            background:rgba(45,45,45,0.15);
+            color:#ffffff;
+        } */
+        /* 检索输入框 */
+        .input1 {
+            z-index: 10000;
+            padding:15px 15px;
+            justify-content: center;
+            border:1.5px solid rgba(55,125,100,0.7);
+            border-radius:9999px;
+            height:45px;
+            width:205px;
+            font-size:15px;
+            letter-spacing:0.5px;
+            background:rgba(255,255,255,0.15);
+            color:#2d2d2d;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+        body.dark-mode input{
+            background:rgba(45,45,45,0.15);
+            color:#ffffff;
+        }
+        .input1:focus {
+            box-shadow: 0 0 3px rgba(55,125,100,0.9);
+        }
+        /* 检索按钮 */
+        .btn1 {
+            background:rgba(55,125,100,0.7) !important;
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        .btn1:hover {
+            background:rgba(65,150,130,0.75) !important;
+            box-shadow: 0 0 5px rgba(65,150,130,0.75) !important;
+            transform: scale(1.04);
+        }
+        .btn1 img {
+            width: 23px;
+            height: 23px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+/* 左下功能区 */
+/* 左下功能区 */
+/* 左下功能区 */
+        /* 1.实时数据按钮 */
+        #showRealtimeDataBtn{
+            z-index: 10000;
+            position:fixed;
+            bottom:20px;
+            left:20px;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(55,80,80,0.7);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            backdrop-filter: blur(5px);
+        }
+        #showRealtimeDataBtn img {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 2.历史数据按钮 */
+        #showHistoryBtn{
+            z-index: 10000;
+            position:fixed;
+            bottom:20px;
+            left:85px;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(55,80,80,0.7);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            backdrop-filter: blur(5px);
+        }
+        #showHistoryBtn img {
+            width: 23px;
+            height: 23px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 3.模型预测按钮 */
+        #predictTrafficBtn{
+            z-index: 10000;
+            position:fixed;
+            bottom:20px;
+            left:150px;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(55,80,80,0.7);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            backdrop-filter: blur(5px);
+        }
+        #predictTrafficBtn img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 4.模拟事件按钮 */
+        #customizeEventsBtn{
+            z-index: 10000;
+            position:fixed;
+            bottom:20px;
+            left:215px;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(55,80,80,0.7);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            backdrop-filter: blur(5px);
+        }
+        #customizeEventsBtn img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 5.路线规划按钮 */
+        #realtimePlanBtn{
+            z-index: 10000;
+            position:fixed;
+            bottom:20px;
+            left: 280px;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(55,80,80,0.7);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            backdrop-filter: blur(5px);
+        }
+        #realtimePlanBtn img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 统一悬浮、激活与深色模式样式 */
+        #showHistoryBtn:hover, #predictTrafficBtn:hover, #customizeEventsBtn:hover, #realtimePlanBtn:hover, #showRealtimeDataBtn:hover{
+            background:rgba(60,115,100,0.75) !important;
+            transform:scale(1.04);
+            box-shadow: 0 0 5px rgba(60,115,100,0.75) !important;
+        }
+        #showHistoryBtn.active, #predictTrafficBtn.active, #customizeEventsBtn.active, #realtimePlanBtn.active, #showRealtimeDataBtn.active,
+        #showHistoryBtn.mode-active, #predictTrafficBtn.mode-active, #customizeEventsBtn.mode-active, #realtimePlanBtn.mode-active, #showRealtimeDataBtn.mode-active{
+            background:rgba(60,115,100,0.75) !important;
+            box-shadow: 0 0 5px rgba(60,115,100,0.75) !important;
+        }
+        body.dark-mode #showHistoryBtn, body.dark-mode #predictTrafficBtn, body.dark-mode #customizeEventsBtn, body.dark-mode #realtimePlanBtn, body.dark-mode #showRealtimeDataBtn{
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+        }
+/* 菜单容器 */
+/* 菜单容器 */
+/* 菜单容器 */
+        .menu-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 菜单项 */
+        .menu-item {
+            position: relative;
+            margin-bottom: 15px;
+            transition: margin-bottom 0.3s cubic-bezier(0.16, 1, 0.25, 1);
+        }
+        /* 按钮组容器 */
+        .left-fixed-btn-group {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+        /* 固定二级菜单显示位置 */
+        .global-fixed-submenu-box {
+            position: fixed;
+            bottom: 85px;
+            left: 20px;
+            z-index: 10000;
+            width: 305px;
+            height: 305px;
+            pointer-events: none;
+        }
+@keyframes menuPopIn {
+    0% {
+        opacity: 0;
+        transform: translateX(0) scale(0.93);
+    }
+    65% {
+        opacity: 1;
+        transform: translateX(0) scale(1.01);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+@keyframes menuPopOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    35% {
+        opacity: 1;
+        transform: translateX(0) scale(1.01);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(0) scale(0.93);
+    }
+}
+/* 实时数据弹窗居中弹出动画 */
+@keyframes modalPopIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.93);
+    }
+    65% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.01);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+@keyframes modalPopOut {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    35% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.01);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.93);
+    }
+}
+/* 时间轴居中弹出动画 */
+@keyframes sliderPopIn {
+    0% {
+        opacity: 0;
+                transform: translateX(-50%) scale(0.93);
+            }
+            65% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.01);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+        @keyframes sliderPopOut {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            35% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.01);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.93);
+            }
+        }
+        /* 固定二级菜单样式 */
+        .fixed-submenu {
+            background:rgba(240,240,240,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border-radius:32.5px;
+            height:305px;
+            width:305px;
+            opacity: 0; /* 初始状态：隐藏 + 动画初始位置 */
+            transform: translateX(0) scale(0.92);
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation-fill-mode: forwards;  /* forwards保持最终状态 */
+        }
+        /* 菜单弹出动画 */
+        .fixed-submenu.active {
+            display: flex;
+            animation: menuPopIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            pointer-events: auto;
+        }
+        /* 菜单收回动画 */
+        .fixed-submenu.closing {
+            animation: menuPopOut 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        /* 深色模式 */
+        body.dark-mode .fixed-submenu {
+            background:rgba(45,45,45,0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+/* 菜单内项通用样式 */
+/* 菜单内项通用样式 */
+/* 菜单内项通用样式 */
+        .submenu-item {
+            flex: 1;                
+            margin: 15px;          
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            color: #2d2d2d;
+            border-radius: 9999px;
+            transition: background 0.25s ease;
+            white-space: nowrap;
+            pointer-events: auto;
+        }
+        body.dark-mode .submenu-item {
+            color: #ffffff;
+        }
+        .submenu-item:hover {
+            background:rgba(60,115,100,0.2);
+            box-shadow: 0 0 5px rgba(60,115,100,0.2);
+            transform: scale(1.04);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.25, 1);
+        }
+/* 路线规划菜单样式 */
+/* 路线规划菜单样式 */
+/* 路线规划菜单样式 */
+        #planMenu {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 10px;
+            gap: 10px;
+        }
+        /* 路线规划输入框 */
+        .plan-input {
+            flex: 1;
+            height: 220px !important;
+            width: 285px !important;
+            padding: 15px 15px;
+            border-radius: 22.5px;
+            border: 1.5px solid rgba(55,80,80,0.7);
+            background: rgba(255,255,255,0.15);
+            color: #2d2d2d;
+            font-size: 15px;
+            font-family: inherit;
+            letter-spacing: 0.8px;
+            outline: none;
+            resize: none;
+            line-height: 1.4;
+            transition: all 0.25s ease;
+            text-align: justify;
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE */
+        }
+        body.dark-mode .plan-input {
+            background: rgba(45,45,45,0.15);
+            color: #ffffff;
+        }
+        .plan-input:focus {
+            box-shadow: 0 0 3px rgba(55,125,100,0.9);
+        }
+        /* 路线规划确认按钮 */
+        .plan-confirm-btn {
+            z-index: 10000;
+            height:45px !important;
+            width:45px !important;
+            background:rgba(55,80,80,0.7) !important;
+        }
+        .plan-confirm-btn:hover {
+            background:rgba(60,115,100,0.75) !important;
+            transform:scale(1.04);
+            box-shadow: 0 0 5px rgba(60,115,100,0.75) !important;
+        }
+        .plan-confirm-btn img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        /* 路线规划状态提示 */
+        .plan-status {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            min-height: 20px;
+        }
+        .plan-status.loading {
+            color: #007bff;
+        }
+        .plan-status.error {
+            color: #dc3545;
+        }
+        .plan-status.success {
+            color: #28a745;
+        }
+        /* 路线规划结果 */
+        .plan-result {
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 11px;
+            color: #444;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: none;
+        }
+        .plan-result.show {
+            display: block;
+        }
+        .plan-result-item {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .plan-result-item:last-child {
+            border-bottom: none;
+        }
+        .plan-result-route {
+            color: #007bff;
+            font-weight: 500;
+        }
+        .plan-result-detectors {
+            color: #28a745;
+        }
+        /* 右下功能区 */
+/* 右下功能区 */
+/* 右下功能区 */
+        /* 1.缩放等级显示 */
+        .zoom-level-indicator{
+            position:fixed;
+            bottom:20px;
+            right:150px;
+            width:45px;
+            height:45px;
+            z-index:2000;
+            background:rgba(240,240,240,0.5); 
+            border-radius:50%;
+            padding: 2px 2px;
+            font-size:10px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border:1.5px solid rgba(255,255,255,0.2);
+            color:#2d2d2d;
+        }
+        body.dark-mode .zoom-level-indicator{
+            background:rgba(45,45,45,0.8);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            border:1.5px solid rgba(255,255,255,0.2);
+            color:#ffffff;
+        }
+        .zoom-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2d2d2d;
+        }
+        .zoom-text {
+            font-size: 11px;
+            color: rgba(45,45,45,0.8);
+        }
+        .dark-mode .zoom-num {
+            color: #ffffff;
+        }
+        .dark-mode .zoom-text {
+            color: rgba(255,255,255,0.8);
+        }
+        /* 2.深色模式按钮 */
+        #darkModeToggle {
+            position: absolute;
+            bottom: 20px;
+            right: 85px;
+            width: 45px;
+            height: 45px;
+            z-index: 10000;
+            border-radius: 50%;
+            background: rgba(45,45,45,0.8);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border:1.5px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        body.dark-mode #darkModeToggle {
+            background: rgba(255,255,255,0.85);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        #darkModeToggle img {
+            width: 27px;
+            height: 27px;
+            fill: currentColor;
+        }
+        #darkModeToggle .switch_to_lightmode_icon {
+            display: none;
+        }
+        #darkModeToggle .switch_to_darkmode_icon {
+            display: block;
+        }
+        body.dark-mode #darkModeToggle .switch_to_lightmode_icon {
+            display: block;
+        }
+        body.dark-mode #darkModeToggle .switch_to_darkmode_icon {
+            display: none;
+        }
+        #darkModeToggle:hover {
+            opacity: 1;
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            transform: scale(1.04);
+        }
+        body.dark-mode #darkModeToggle:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            transform: scale(1.04);
+        }
+        /* 3.编辑模式功能按钮 */
+        #editModeBtn{
+            z-index: 10000;
+            position:fixed;
+            bottom:20px;
+            right: 20px;
+            height:45px !important;
+            width:45px !important;
+            background: rgba(45,45,45,0.8);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border:1.5px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+        }
+        #editModeBtn img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        body.dark-mode #editModeBtn {
+            background: rgba(255,255,255,0.85);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            border:1.5px solid rgba(255,255,255,0.2);
+        }
+        #editModeBtn .switch_to_lightmode_edit {display: none;}
+        #editModeBtn .switch_to_darkmode_edit {display: block;}
+        body.dark-mode #editModeBtn .switch_to_lightmode_edit {display: block;}
+        body.dark-mode #editModeBtn .switch_to_darkmode_edit {display: none;}
+        #editModeBtn:hover {
+            opacity: 1;
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            transform: scale(1.04);
+        }
+        body.dark-mode #editModeBtn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            transform: scale(1.04);
+        }
+/* 道路信息 */
+/* 道路信息 */
+/* 道路信息 */
+        /* 道路编号面板 */
+        .marker-label{
+            background:rgba(45,45,45,0.6);
+            color:rgba(255,255,255,0.8);
+            font-size:12px;
+            font-weight:500;
+            padding:2px 4px;
+            border-radius:9999px;
+            white-space:nowrap;
+            pointer-events:none;
+            z-index:100;
+            opacity:0;
+            transition:opacity 0.3s;position:absolute
+        }
+        .marker-label.visible{
+            opacity:1
+        }
+        body.dark-mode .marker-label{
+            background:rgba(255,255,255,0.6);
+            color:rgba(45,45,45,0.8);
+        }
+/* 粒子效果 */
+        .particle{
+            position:absolute;
+            width:4px;
+            height:4px;
+            border-radius:50%;
+            background:#f5a541;
+            box-shadow:0 0 2px #f5a541;
+            pointer-events:none;
+            z-index:1000;
+            opacity:0.9;
+            will-change:transform
+        }
+/* 操作状态反馈 */
+/* 操作状态反馈 */
+/* 操作状态反馈 */
+        .instructions{color:rgba(102,102,102,0.8);font-size:12px;line-height:1.4}
+        .click-hint{color:rgba(26,115,232,0.6);font-size:11px;margin-top:3px;font-weight:500}
+        .status{
+            position:fixed;
+            top:20px;
+            left:50%;
+            transform:translateX(-50%);
+            z-index:99999;
+            padding:8px 16px;
+            border-radius:9999px;
+            font-size:15px;
+            letter-spacing:1px;
+            display:none;
+            opacity: 0;
+            transition: none;
+        }
+        /* 显示动画 */
+        .status.show {
+            display: block;
+            animation: statusPopup 0.35s cubic-bezier(0.16, 1, 0.25, 1) forwards;
+        }
+        /* 隐藏动画 */
+        .status.hide {
+            animation: statusFadeOut 0.3s cubic-bezier(0.16, 1, 0.25, 1) forwards;
+        }
+        @keyframes statusPopup {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.93); /* 初始：缩小 */
+            }
+            65% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.01); /* 回弹 */
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1); /* 复位：正常位置 */
+            }
+        }
+        @keyframes statusFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1); /* 初始：正常位置 */
+            }
+            35% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.01); /* 回弹 */
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.93); /* 复位：缩小 */
+            }
+        }
+        .status.loading{
+            background:rgba(100,220,205,0.7);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(100,220,205,0.4);
+            color:#ffffff;
+        }
+        body.dark-mode .status.loading{
+            background:rgba(90,210,175,0.7); /* 颜色可能要改 */
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(90,210,175,0.4);
+            color:#ffffff;
+        }
+        .status.error{
+            background:rgba(170,45,40,0.7);
+            backdrop-filter: blur(15px);
+            color:#ffffff;
+        }
+/* 按钮悬浮提示文字 */
+/* 按钮悬浮提示文字 */
+/* 按钮悬浮提示文字 */
+        .tooltip {
+            position: absolute;
+            padding: 4px 4px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 99999;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            color: rgba(45,45,45,0.75);
+        }
+        body.dark-mode .tooltip {
+            color: rgba(255,255,255,0.75);
+        }
+        .tooltip.show {
+            opacity: 1;
+        }
+/* 底部时间轴样式 */
+/* 底部时间轴样式 */
+/* 底部时间轴样式 */
+        .timeline-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            pointer-events: auto;
+        }
+        .timeline-container.active {
+            display: flex;
+            animation: sliderPopIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .timeline-container.closing {
+            animation: sliderPopOut 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .timeline-bg {
+            background: rgba(240,240,240,0.5);
+            backdrop-filter: blur(15px);
+            border-radius: 9999px;
+            height: 38px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        body.dark-mode .timeline-bg {
+            background: rgba(45,45,45,0.5);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+        }
+        .timeline-slider-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        #timelineSlider {
+            width: 200px;
+            height: 4px;
+            appearance: none;
+            border-radius: 9999px;
+            background: rgba(125,130,135,0.3);
+            outline: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        #timelineSlider::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(55,80,80,0.8);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+        }
+        #timelineSlider::-webkit-slider-thumb:hover {
+            background: rgba(60,115,100,0.9);
+        }
+        .timeline-date-label {
+            font-size: 13px;
+            color: #2d2d2d;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        body.dark-mode .timeline-date-label {
+            color: #ffffff;
+        }
+        .timeline-time-label {
+            font-size: 12px;
+            color: #555;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+            min-width: 42px;
+        }
+        body.dark-mode .timeline-time-label {
+            color: rgba(255,255,255,0.7);
+        }
+/* 右侧数据面板 */
+/* 右侧数据面板 */
+/* 右侧数据面板 */
+        .controls-container3 {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 305px;
+            height: 450px;
+            z-index: 10000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(45, 45, 45, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius:32.5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.25, 1);
+            overflow: hidden;
+        }
+        body.dark-mode .controls-container3 {
+            background: rgba(45, 45, 45, 0.8);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+        /* 收起状态：宽度变窄，内容隐藏 */
+        .controls-container3.collapsed {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            opacity: 0;
+            overflow: hidden;
+        }
+        /* 标题 */
+        .controls-title3 {
+            font-size: 25px;
+            font-weight: 600;
+            color: #2d2d2d;
+            letter-spacing: 0.8px;
+            text-align: left;
+        }
+        body.dark-mode .controls-title3 {
+            color: #ffffff;
+        }
+        .controls-subtitle3 {
+            font-size: 14px;
+            color: #2d2d2d;
+            text-align: left;
+        }
+        body.dark-mode .controls-subtitle3 {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        /* 收起 / 展开圆形按钮 */
+        .toggle-panel-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background: rgba(100, 200, 165, 0.7) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            z-index: 10001;
+            transition: all 0.3s ease;
+        }
+        .toggle-panel-btn:hover {
+            background: rgba(105, 220, 160, 0.75) !important;
+            transform: scale(1.04);
+            box-shadow: 0 0 5px rgba(105, 220, 160, 0.75);
+        }
+        .controls-container3.collapsed .toggle-panel-btn svg {
+            transform: rotate(180deg);
+        }
+        /* 内容区域 */
+        .container3-content {
+            width: 100%;
+            padding: 20px;
+            transition: opacity 0.3s ease;
+        }
+        .controls-container3.collapsed .container3-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+/* 颜色编辑菜单 */
+/* 颜色编辑菜单 */
+/* 颜色编辑菜单 */
+        .color-edit-menu {
+            position: fixed;
+            right: 20px;
+            bottom: 85px;
+            z-index: 10000;
+            width: 305px;
+            height: 120px;
+            border-radius:32.5px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 5px rgba(45,45,45,0.2);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 默认隐藏 */
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(0) scale(0.92);
+            display: none;
+            animation-fill-mode: forwards;
+        }
+        /* 深色模式 */
+        body.dark-mode .color-edit-menu {
+            background: rgba(45, 45, 45, 0.5);
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.1);
+        }
+        /* 弹出动画（和左侧菜单一样：menuPopIn） */
+        .color-edit-menu.active {
+            display: flex;
+            animation: menuPopIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            pointer-events: auto;
+        }
+        /* 收回动画 */
+        .color-edit-menu.closing {
+            animation: menuPopOut 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        /* 显示状态 */
+        .color-edit-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+/* 颜色按钮组 */
+/* 颜色按钮组 */
+/* 颜色按钮组 */
+        .color-btn-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 颜色按钮统一样式 */
+        .color-item {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .color-item img {
+            width: 43.5px;
+            height: 43.5px;
+            object-fit: contain;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .color-item:hover {
+            transform: scale(1.04) rotate(45deg);
+            box-shadow: 0 0 5px currentColor;
+        }
+        .color-item:active {
+            transform: scale(1) rotate(315deg);
+            box-shadow: 0 0 5px currentColor;
+        }
+        .color1 {
+            background: rgba(255,255,255,0.15) !important;
+        }
+        .color2 {
+            background: rgba(255,255,255,0.15) !important;
+        }
+        .color3 {
+            background: rgba(255,255,255,0.15) !important;
+        }
+        .color4   {
+            background: rgba(255,255,255,0.15) !important;
+        }
+/* 日历样式 */
+.calendar-container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #2d2d2d;
+}
+body.dark-mode .calendar-header {
+    color: #ffffff;
+}
+.calendar-nav-btn {
+    width: 30px;
+    height: 30px;
+    background:rgba(55,80,80,0.7) !important;
+    box-shadow: 0 0 5px rgba(45,45,45,0.2) !important;
+    border:1.5px solid rgba(255,255,255,0.15) !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 16px;
+    border: none;
+}
+.calendar-nav-btn:hover {
+    background:rgba(60,115,100,0.75) !important;
+    transform:scale(1.04);
+    box-shadow: 0 0 5px rgba(60,115,100,0.75) !important;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    flex: 1;
+    align-content: start;
+}
+.calendar-day-header {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(45,45,45,0.6);
+}
+body.dark-mode .calendar-day-header {
+    color: rgba(255,255,255,0.6);
+}
+.calendar-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    color: #2d2d2d;
+    transition: all 0.3s;
+}
+body.dark-mode .calendar-day {
+    color: #ffffff;
+}
+.calendar-day:hover {
+    background: rgba(60,115,100,0.2);
+    transform: scale(1.04);
+}
+.calendar-day.today {
+    background:rgba(60,115,100,0.75);
+    border:1.5px solid rgba(255,255,255,0.2);
+    color: #ffffff;
+}
+.calendar-day.other-month {
+    opacity: 0.35;
+}
+/* 水印除去背景 */
+.leaflet-control-attribution {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ==================== 统一通知弹窗（红色毛玻璃） ==================== */
+.coze-toast {
+    position: fixed;
+    top: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: rgba(180, 30, 30, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 100, 100, 0.4);
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    min-width: 200px;
+    max-width: 360px;
+    white-space: pre-line;
+    line-height: 1.5;
+}
+.coze-toast.show {
+    opacity: 1;
+}
+
+/* ==================== 底部毛玻璃时间信息条（浮动圆角矩形） ==================== */
+.bottom-bar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 40px;
+    background: rgba(20, 40, 50, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    display: none;  /* 默认隐藏，有数据时才显示 */
+    align-items: center;
+    padding: 0 22px;
+    z-index: 800;
+    gap: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.bottom-bar.visible {
+    display: flex;
+    opacity: 1;
+}
+.bottom-bar-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+}
+.bottom-bar-date {
+    font-weight: 600;
+    color: rgba(255,255,255,0.95);
+}
+.bottom-bar-sep {
+    color: rgba(255,255,255,0.4);
+}
+.bottom-bar-time {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #a8e6cf;
+}
+
+/* ==================== 实时数据弹窗（参考二级菜单样式） ==================== */
+.realtime-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.92);
+    width: 80%;
+    max-width: 700px;
+    max-height: 70vh;
+    background: rgba(45, 45, 45, 0.5);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    opacity: 0;
+    display: none;
+    flex-direction: column;
+    z-index: 10000;
+    animation-fill-mode: forwards;
+    overflow: hidden;
+}
+
+.realtime-modal.active {
+    display: flex;
+    animation: modalPopIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    pointer-events: auto;
+}
+
+.realtime-modal.closing {
+    animation: modalPopOut 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.realtime-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: move;
+}
+
+.realtime-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.realtime-modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.realtime-modal-close:hover {
+    background: rgba(255, 100, 100, 0.3);
+}
+
+.realtime-modal-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.realtime-loading {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 40px;
+}
+
+.realtime-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.realtime-table th {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 10px 12px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.realtime-table td {
+    padding: 8px 12px;
+    color: rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.realtime-table tr:hover td {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.realtime-table .volume {
+    color: #a8e6cf;
+    font-weight: 600;
+}
+
+.realtime-table .speed {
+    color: #ffd93d;
+    font-weight: 600;
+}
+
+
+
+/* ==================== 弹窗遮罩层 ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
