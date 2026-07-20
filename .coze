@@ -1,0 +1,10 @@
+[project]
+requires = ["nodejs-24", "python-3.12"]
+
+[dev]
+build = ["pnpm", "install"]
+run = ["bash", "scripts/coze-preview-run.sh"]
+
+[deploy]
+build = ["bash", "-c", "pnpm install"]
+run = ["bash", "scripts/coze-deploy-run.sh"]
