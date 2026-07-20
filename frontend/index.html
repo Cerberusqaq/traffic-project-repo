@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>灵动交通可视化平台</title>
+
+    <!-- Leaflet CSS (本地) -->
+    <link rel="stylesheet" href="./vendor/leaflet.css"/>
+
+    <!-- 项目自定义样式 -->
+    <link rel="stylesheet" href="./css/style.css">
+
+
+</head>
+
+<body>
+    <!-- 地图容器 -->
+    <div id="map"></div>
+
+    <!-- 顶部时间显示 -->
+    <div id="realtimeHeader" class="realtime-header" style="display: none;">
+        <span id="currentTimeDisplay"></span>
+        <span id="currentModeLabel" class="mode-label"></span>
+    </div>
+
+    <!-- 爬取状态弹窗 -->
+    <div id="fetchingModal" class="fetching-modal">
+        <div class="fetching-content">
+            <div class="fetching-spinner"></div>
+            <div class="fetching-text">正在爬取实时数据...</div>
+        </div>
+    </div>
+
+    <!-- 顶部状态提示条 -->
+    <div id="status" class="status"></div>
+
+    <!-- ==================== 左上控制面板 ==================== -->
+    <div class="controls-container1">
+        <div class="controls-title">灵动交通</div>
+        <div class="controls-title2">可视化平台</div>
+        <div class="controls-subtitle">Dynamic Transport</div>
+        <div class="control-group1">
+            <!-- 粒子动画按钮 -->
+            <button id="particleBtn" onclick="toggleParticleAnimation()">
+                <img src="./assets/icons/particle.svg" alt="粒子">
+            </button>
+            <!-- 数据点按钮 -->
+            <button id="showMarkersBtn" onclick="toggleMarkers()">
+                <img src="./assets/icons/data_marker.svg" alt="数据点">
+            </button>
+            <!-- 热力图按钮 -->
+            <button id="showHeatBtn" onclick="toggleHeat()">
+                <img src="./assets/icons/heat.svg" alt="热力图">
+            </button>
+            <!-- 可视化播放/暂停按钮 -->
+            <button id="visualPlayPauseBtn" onclick="toggleVisualPlayPause()">
+                <img class="play-icon" src="./assets/icons/visualization_resume.svg" alt="播放" style="display:none">
+                <img class="pause-icon" src="./assets/icons/visualization_pause.svg" alt="暂停">
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 搜索面板 ==================== -->
+    <div class="controls-container2">
+        <div class="control-group2">
+            <input type="text" class="input1" id="searchText" placeholder="">
+            <button class="btn1" onclick="searchByText()">
+                <img src="./assets/icons/btn1.svg" alt="检索">
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 左下功能按钮组 ==================== -->
+    <div class="left-fixed-btn-group">
+        <!-- 1. 实时数据展示 -->
+        <button id="showRealtimeDataBtn">
+            <img src="./assets/icons/realtime_data.svg" alt="实时数据">
+        </button>
+        <!-- 2. 历史数据展示 -->
+        <button id="showHistoryBtn" data-menu-target="historyMenu">
+            <img src="./assets/icons/history.svg" alt="历史数据">
+        </button>
+        <!-- 3. 模型预测展示 -->
+        <button id="predictTrafficBtn" data-menu-target="predictMenu">
+            <img src="./assets/icons/predict.svg" alt="模型预测">
+        </button>
+        <!-- 4. 自定义路径 -->
+        <button id="customPathBtn" data-menu-target="customPathMenu">
+            <img src="./assets/icons/path.svg" alt="自定义路径">
+        </button>
+        <!-- 5. 突发事件模拟 -->
+        <button id="customizeEventsBtn" data-menu-target="customizeMenu">
+            <img src="./assets/icons/customize.svg" alt="模拟事件">
+        </button>
+        <!-- 6. 路线规划导览 -->
+        <button id="realtimePlanBtn" data-menu-target="planMenu">
+            <img src="./assets/icons/realtimePlan.svg" alt="路线规划">
+        </button>
+    </div>
+
+    <!-- ==================== 二级菜单容器 ==================== -->
+    <div class="global-fixed-submenu-box">
+        <!-- 历史数据菜单（日历） -->
+        <div class="fixed-submenu" id="historyMenu">
+            <div class="calendar-container" id="historyCalendar"></div>
+        </div>
+        <!-- 流量预测菜单（日历） -->
+        <div class="fixed-submenu" id="predictMenu">
+            <div class="calendar-container" id="predictCalendar"></div>
+        </div>
+        <!-- 自定义路径菜单 -->
+        <div class="fixed-submenu custom-path-submenu" id="customPathMenu">
+            <div class="custom-path-form">
+                <div class="form-title">自定义路径</div>
+                <div class="custom-path-scroll-area">
+                    <!-- 路径操作模式 -->
+                    <div class="form-group compact-group">
+                        <label>模式</label>
+                        <select id="pathMode">
+                            <option value="add">添加连接</option>
+                            <option value="remove">移除连接</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 意愿强度选择 -->
+                    <div class="form-group compact-group" id="pathWeightGroup">
+                        <label>意愿强度</label>
+                        <div class="willingness-btns" id="willingnessBtns">
+                            <button class="willingness-btn" data-level="low" onclick="selectWillingness('low')">低</button>
+                            <button class="willingness-btn active" data-level="medium-low" onclick="selectWillingness('medium-low')">中低</button>
+                            <button class="willingness-btn" data-level="medium-high" onclick="selectWillingness('medium-high')">中高</button>
+                            <button class="willingness-btn" data-level="high" onclick="selectWillingness('high')">高</button>
+                        </div>
+                        <button class="advanced-toggle" id="advancedToggle" onclick="toggleAdvancedWeight()">高级选项</button>
+                        <div class="advanced-weight" id="advancedWeightPanel" style="display:none">
+                            <label>自定义权重: <span id="pathWeightValue">1.0</span></label>
+                            <input type="range" id="pathWeight" min="0.1" max="20" step="0.1" value="1.0">
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮组 -->
+                    <div class="path-btn-row">
+                        <button class="path-action-btn" id="startPathBtn" onclick="startPathSelection()">开始选择节点</button>
+                        <button class="path-undo-btn" id="undoPathBtn" onclick="undoPathNode()" style="display:none">撤销</button>
+                    </div>
+
+                    <!-- 已选节点 -->
+                    <div class="selected-path-nodes" id="selectedPathNodes">
+                        <span id="pathNodesDisplay">点击按钮后点击地图上的节点</span>
+                    </div>
+                    
+                    <!-- 操作提示 -->
+                    <div class="path-status" id="pathStatus"></div>
+
+                    <!-- 确认连接栏 -->
+                    <div class="path-confirm-bar" id="pathConfirmBar" style="display:none">
+                        <div class="path-confirm-text" id="pathConfirmText"></div>
+                        <div class="path-confirm-weight" id="pathConfirmWeightGroup" style="display:none">
+                            <label class="confirm-willingness-label">意愿强度</label>
+                            <div class="willingness-btns" id="confirmWillingnessBtns">
+                                <button class="willingness-btn" data-level="low" onclick="selectConfirmWillingness('low')">低</button>
+                                <button class="willingness-btn active" data-level="medium-low" onclick="selectConfirmWillingness('medium-low')">中低</button>
+                                <button class="willingness-btn" data-level="medium-high" onclick="selectConfirmWillingness('medium-high')">中高</button>
+                                <button class="willingness-btn" data-level="high" onclick="selectConfirmWillingness('high')">高</button>
+                            </div>
+                            <div class="confirm-advanced-row">
+                                <button class="advanced-toggle" id="confirmAdvancedToggle" onclick="toggleConfirmAdvanced()">高级</button>
+                                <div class="advanced-weight" id="confirmAdvancedPanel" style="display:none">
+                                    <input type="range" id="pathConfirmWeight" min="0.1" max="20" step="0.1" value="1.0">
+                                    <span id="pathConfirmWeightValue">1.0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="path-confirm-btns">
+                            <button class="path-confirm-ok" onclick="confirmPathOperation()">确认</button>
+                            <button class="path-confirm-cancel" onclick="cancelPathConfirm()">取消</button>
+                        </div>
+                    </div>
+
+                    <!-- 已连接路径列表 -->
+                    <div class="connection-list-section" id="connectionListSection">
+                        <div class="connection-list-header">
+                            <span>已添加的连接</span>
+                            <span class="connection-count" id="connectionCount">0</span>
+                        </div>
+                        <div class="connection-list" id="connectionList">
+                            <div class="connection-empty">暂无自定义连接</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部固定区 -->
+                <div class="custom-path-footer">
+                    <button class="path-reset-btn" onclick="resetNetwork()">重置路网</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 突发事件菜单 -->
+        <div class="fixed-submenu emergency-submenu" id="customizeMenu">
+            <div class="emergency-form">
+                <div class="form-title">突发事件模拟</div>
+                <div class="emergency-scroll-area">
+                    <!-- 事件类型 -->
+                    <div class="form-group">
+                        <label>事件类型</label>
+                        <select id="emergencyType">
+                            <option value="lane_reduction">车道减少</option>
+                            <option value="speed_limit">限速</option>
+                            <option value="traffic_surge">流量激增</option>
+                            <option value="road_block">道路封闭</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 受影响节点 -->
+                    <div class="form-group">
+                        <label>受影响节点</label>
+                        <div class="node-input-row">
+                            <input type="text" id="emergencyNodes" placeholder="输入节点ID，如 2,3,5" value="">
+                            <button class="node-select-btn" id="nodeSelectBtn" onclick="toggleNodeSelection()">
+                                <span class="node-select-btn-text">地图<br>选点</span>
+                            </button>
+                        </div>
+                        <div class="selected-nodes-display" id="selectedNodesDisplay"></div>
+                        <div class="node-hint" id="nodeHint">有效ID范围: 2 ~ 1006</div>
+                    </div>
+                    
+                    <!-- 参数设置（根据事件类型动态切换） -->
+                    <div class="form-group" id="severityGroup">
+                        <label id="severityLabel">车道减少比例: <span id="severityValue">50</span>%</label>
+                        <input type="range" id="emergencySeverity" min="0" max="1" step="0.05" value="0.5">
+                    </div>
+                    
+                    <!-- 预测步数 -->
+                    <div class="form-group">
+                        <label>预测步数: <span id="stepsValue">36</span></label>
+                        <input type="range" id="emergencySteps" min="1" max="72" step="1" value="36">
+                    </div>
+                </div>
+                
+                <!-- 底部固定区域：按钮 + 状态 -->
+                <div class="emergency-footer">
+                    <div class="emergency-status" id="emergencyStatus"></div>
+                    <button class="emergency-submit-btn" id="emergencySubmitBtn" onclick="submitEmergencySimulation()">
+                        执行模拟
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 路线规划菜单 -->
+        <div class="fixed-submenu" id="planMenu">
+            <textarea class="plan-input" id="planInput" placeholder="请用自然语言描述您的行程&#10;例如：明天早上8点从香港大学到中环"></textarea>
+            <button class="plan-confirm-btn" id="planConfirmBtn" onclick="handlePlanRoute()">
+                <img src="./assets/icons/plan_confirm.svg" alt="确认">
+            </button>
+            <div class="plan-status" id="planStatus"></div>
+            <div class="plan-result" id="planResult"></div>
+        </div>
+        
+        <!-- 事件模拟提示窗口 -->
+        <div id="emergencyHintOverlay" class="emergency-hint-overlay">
+            <div class="emergency-hint-content">拖动底部滑块以开始</div>
+        </div>
+    </div>
+
+    <!-- ==================== 右下常驻控件 ==================== -->
+    <!-- 缩放等级指示器 -->
+    <span id="currentZoomLevel" class="zoom-level-indicator">
+        <span class="zoom-num">12</span><br>
+        <span class="zoom-text">缩放</span>
+    </span>
+
+    <!-- 深色/浅色模式切换 -->
+    <button id="darkModeToggle" onclick="toggleDarkMode()">
+        <img class="switch_to_lightmode_icon" src="./assets/icons/switch_to_lightmode_icon.svg" alt="浅色">
+        <img class="switch_to_darkmode_icon" src="./assets/icons/switch_to_darkmode_icon.svg" alt="深色">
+    </button>
+
+    <!-- 主题编辑按钮 -->
+    <button id="editModeBtn">
+        <img class="switch_to_lightmode_edit" src="./assets/icons/edit_lightmode.svg" alt="编辑模式">
+        <img class="switch_to_darkmode_edit" src="./assets/icons/edit_darkmode.svg" alt="编辑模式">
+    </button>
+
+    <!-- 颜色编辑弹出菜单 -->
+    <div class="edit-submenu-wrapper">
+        <div class="color-edit-menu" id="colorEditMenu">
+            <div class="color-btn-group">
+                <button class="color-item color1" data-color="#b4f0e6">
+                    <img src="./assets/icons/color1.svg" alt="主题1">
+                </button>
+                <button class="color-item color2" data-color="#64d7dc">
+                    <img src="./assets/icons/color2.svg" alt="主题2">
+                </button>
+                <button class="color-item color3" data-color="#fad28c">
+                    <img src="./assets/icons/color3.svg" alt="主题3">
+                </button>
+                <button class="color-item color4" data-color="#ff8773">
+                    <img src="./assets/icons/color4.svg" alt="主题4">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 底部信息条 ==================== -->
+    <div class="bottom-bar" id="bottomBar">
+        <!-- 退出历史模式按钮 -->
+        <button class="exit-history-btn" id="exitHistoryBtn" title="退出历史模式">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+        <div class="bottom-bar-info" id="bottomBarInfo">
+            <span class="bottom-bar-date" id="bottomBarDate">选择日期查看历史数据</span>
+            <span class="bottom-bar-sep" id="bottomBarSep" style="display:none;">|</span>
+            <span class="bottom-bar-time" id="bottomBarTime" style="display:none;"></span>
+        </div>
+        <!-- 时间进度条 -->
+        <div class="time-slider-container" id="timeSliderContainer" style="display:none;">
+            <input type="range" class="time-slider" id="timeSlider" min="0" max="143" value="0">
+            <span class="time-slider-label" id="timeSliderLabel">00:00</span>
+        </div>
+    </div>
+
+    <!-- ==================== 右侧数据面板 ==================== -->
+    <button class="toggle-panel-btn" id="toggleContainer3">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+    </button>
+
+    <div class="controls-container3 collapsed" id="container3">
+        <div class="container3-content">
+            <div class="controls-title3">实时数据</div>
+            <div class="controls-subtitle3">Realtime Data</div>
+            <div class="detector-data-table" id="detectorDataTable">
+                <div class="table-header">
+                    <span class="col-id">检测器编号</span>
+                    <span class="col-speed">速度(km/h)</span>
+                </div>
+                <div class="table-body" id="detectorTableBody">
+                    <div class="table-empty">暂无数据</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ==================== 统一通知弹窗（红色毛玻璃） ==================== -->
+    <div id="cozeToast" class="coze-toast" style="display:none;">
+        <span id="cozeToastMsg"></span>
+    </div>
+
+    <!-- Leaflet JS 核心库（本地） -->
+    <script src="./vendor/leaflet.js"></script>
+    <!-- Leaflet 箭头插件（仅透明连线，暂不加载） -->
+    <!-- <script src="https://unpkg.com/leaflet-arrowheads@1.4.0/src/leaflet-arrowheads.js"></script> -->
+    <!-- Leaflet 热力图插件（本地） -->
+    <script src="./vendor/leaflet-heat.min.js"></script>
+
+    <!-- 项目功能模块（严格按依赖顺序加载） -->
+    <!-- 1. 全局配置和状态变量 -->
+    <script src="./js/config.js"></script>
+    <!-- 2. UI 工具模块（日历、菜单、CSV解析、箭头层、标记管理） -->
+    <script src="./js/ui.js"></script>
+    <!-- 3. 粒子动画模块 -->
+    <script src="./js/particle.js"></script>
+    <!-- 4. 热力图模块 -->
+    <script src="./js/heatmap.js"></script>
+    <!-- 5. 工具函数（CSV解码、实时数据爬取、Toast通知） -->
+    <script src="./js/utils.js"></script>
+    <!-- 6. 地图初始化和事件绑定 -->
+    <script src="./js/map.js"></script>
+    <!-- 7. 数据加载和处理 -->
+    <script src="./js/data.js"></script>
+    <!-- 8. 功能模式状态机 -->
+    <script src="./js/mode.js"></script>
+    <!-- 9. 可视化控制 -->
+    <script src="./js/visualization.js"></script>
+    <!-- 10. 路线规划功能 -->
+    <script src="./js/routes.js"></script>
+    <!-- 11. 自定义路径和突发事件模拟 -->
+    <script src="./js/custom.js"></script>
+    <!-- 12. 主应用入口 -->
+    <script src="./js/app.js"></script>
+</body>
+</html>

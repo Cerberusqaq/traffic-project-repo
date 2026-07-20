@@ -1,0 +1,18 @@
+{
+  "name": "traffic-visualization-backend",
+  "version": "1.0.0",
+  "description": "灵动交通可视化平台后端服务 - 提供数据API与静态资源托管",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
